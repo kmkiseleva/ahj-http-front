@@ -1,0 +1,223 @@
+body {
+  background: url('../img/wallpaper.png') no-repeat center center fixed;
+  background-size: cover;
+}
+
+h1 {
+  color: white;
+  margin: 20px auto;
+  font-size: 64px;
+  width: 300px;
+  text-align: center;
+}
+
+#main {
+  position: relative;
+}
+
+.container {
+  width: 900px;
+  height: 500px;
+  margin: 0 auto;
+  border: 1px solid white;
+  align-items: center;
+  justify-content: center;
+}
+
+.container__add-ticket {
+  width: 200px;
+  height: 40px;
+  border: 1px solid white;
+  border-radius: 10px;
+  color: white;
+  font-size: 24px;
+  text-align: center;
+  padding-top: 12px;
+  margin-left: 650px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.container__add-ticket:active {
+  transform: scale(0.8);
+}
+
+.ticket {
+  color: white;
+  width: 700px;
+  margin: 20px auto;
+  border: 1px solid white;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 20px;
+}
+
+.ticket__body {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.ticket__status {
+  flex: 0 0 20px;
+  position: relative;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  border: 1px solid white;
+  margin-right: 10px;
+  background-color: white;
+}
+
+.done {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 0;
+  left: 0;
+  background-image: url('../img/check.svg');
+  background-repeat: no-repeat;
+  background-size: 20px;
+}
+
+.ticket__text {
+  width: 500px;
+}
+
+.ticket__data {
+  width: 160px;
+  margin-right: 10px;
+}
+
+.ticket__description {
+  margin-top: 10px;
+  margin-left: 33px;
+  font-size: 16px;
+}
+
+.ticket__delete,
+.ticket__edit {
+  flex: 0 0 20px;
+  position: relative;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  border: 1px solid white;
+  margin-right: 10px;
+  cursor: pointer;
+  background-color: white;
+}
+
+.ticket__status:active,
+.ticket__delete:active,
+.ticket__edit:active {
+  transform: scale(0.9);
+}
+
+.ticket__delete-img,
+.ticket__edit-img {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 3px;
+  background-repeat: no-repeat;
+}
+
+.ticket__edit-img {
+  left: 4px;
+  background-image: url('../img/pencil.svg');
+  background-size: 13px;
+}
+
+.ticket__delete-img {
+  left: 3px;
+  background-image: url('../img/trash.svg');
+  background-size: 15px;
+}
+
+.modal__add,
+.modal__edit,
+.modal__delete {
+  background-color: white;
+  width: 500px;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  border: 3px solid grey;
+  border-radius: 10px;
+  padding: 15px;
+  font-size: 24px;
+}
+
+.modal__edit {
+  min-height: 150px;
+}
+
+.modal__body {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  text-align: center;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.form__group {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.form__label {
+  margin-right: 20px;
+  width: 200px;
+}
+
+.form__input,
+.form__description {
+  width: 200px;
+  border-radius: 10px;
+  border: 1px solid grey;
+  padding: 10px;
+}
+
+.form__description {
+  min-width: 200px;
+  max-width: 200px;
+  min-height: 50px;
+}
+
+.modal__delete {
+  height: 100px;
+}
+
+.modal__footer {
+  margin-top: 30px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal__close,
+.modal__ok {
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 7px;
+  cursor: pointer;
+}
+
+.modal__close {
+  margin-right: 20px;
+}
+
+.modal__close:active,
+.modal__ok:active {
+  transform: scale(0.9);
+}
+
+.hidden {
+  display: none;
+}
