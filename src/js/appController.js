@@ -12,33 +12,39 @@ export default class AppController {
   }
 
   registerEvents() {
-    // добавить тикет, показать модальное окно
+    // показать / скрыть модальное окно - добавить тикет
     const addTicket = document.querySelector('.container__add-ticket');
     addTicket.addEventListener('click', () => this.showAddModal());
 
-    // показать / скрыть описание тикета
     const containerTickets = document.querySelector('.container__tickets');
     containerTickets.addEventListener('click', (e) => {
-      this.showDescription(e);
+      // показать / скрыть описание тикета
+      if (
+        !e.target.closest('.ticket__edit') &&
+        !e.target.closest('.ticket__delete') &&
+        !e.target.closest('.ticket__status')
+      ) {
+        this.showDescription(e);
+      }
+
+      // изменить статус тикета
+      if (e.target.closest('.ticket__status')) {
+        const parentEl = e.target.closest('.ticket');
+        const { id } = parentEl.dataset;
+        this.changeStatus(id);
+      }
     });
   }
 
+  get ticketContainer() {
+    return this.container.querySelector('.container__tickets');
+  }
+
+  // отрисовка тикетов с сервера
   renderTickets(data = []) {
-    const containerTickets = this.container.querySelector('.container__tickets');
     data.forEach((ticket) => {
       const newTicket = this.render(ticket);
-      containerTickets.insertAdjacentHTML('beforeend', newTicket);
-    });
-  }
-
-  // модальное окно - добавить новый тикет
-  showAddModal() {
-    const modalAdd = document.querySelector('.modal__add');
-    modalAdd.classList.toggle('hidden');
-
-    const modalClose = document.querySelector('.modal__close');
-    modalClose.addEventListener('click', () => {
-      modalAdd.classList.add('hidden');
+      this.ticketContainer.insertAdjacentHTML('beforeend', newTicket);
     });
   }
 
@@ -53,7 +59,7 @@ export default class AppController {
     <div class="ticket" data-id="${ticket.id}">
             <div class="ticket__body">
               <div class="ticket__status">
-                <span class=""></span>
+                <span class="${ticket.status}"></span>
               </div>
               <div class="ticket__text">${ticket.name}</div>
               <div class="ticket__data">${date}</div>
@@ -69,9 +75,32 @@ export default class AppController {
     `;
   }
 
+  // показать / скрыть модальное окно - добавить новый тикет
+  showAddModal() {
+    const modalAdd = document.querySelector('.modal__add');
+    modalAdd.classList.toggle('hidden');
+
+    const modalClose = document.querySelector('.modal__close');
+    modalClose.addEventListener('click', () => {
+      modalAdd.classList.add('hidden');
+    });
+  }
+
+  // показать / скрыть описание тикета
   showDescription(e) {
     const parentEl = e.target.closest('.ticket');
     const ticketDescription = parentEl.querySelector('.ticket__description');
     ticketDescription.classList.toggle('hidden');
+  }
+
+  // изменить статус тикета
+  async changeStatus(id) {
+    this.currentEditObj = await this.api.get(id);
+    this.currentEditObj.status = !this.currentEditObj.status;
+    await this.api.update(id, this.currentEditObj, (response) => {
+      this.ticketContainer.textContent = '';
+      this.renderTickets(response);
+    });
+    this.currentEditObj = null;
   }
 }
