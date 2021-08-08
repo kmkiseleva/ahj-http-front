@@ -9,6 +9,7 @@ export default class AppController {
   init() {
     this.registerEvents();
     this.api.list(this.renderTickets.bind(this));
+    this.closeDeleteModal();
   }
 
   registerEvents() {
@@ -32,6 +33,21 @@ export default class AppController {
         const parentEl = e.target.closest('.ticket');
         const { id } = parentEl.dataset;
         this.changeStatus(id);
+      }
+
+      // удалить тикет
+      if (e.target.closest('.ticket__delete')) {
+        const parentEl = e.target.closest('.ticket');
+        const { id } = parentEl.dataset;
+        const deleteModal = this.container.querySelector('.modal__delete');
+        deleteModal.classList.toggle('hidden');
+
+        const modalOk = deleteModal.querySelector('.modal__ok');
+        modalOk.addEventListener('click', (event) => {
+          event.stopImmediatePropagation();
+          this.deleteTicket(id);
+          deleteModal.classList.add('hidden');
+        });
       }
     });
   }
@@ -93,11 +109,28 @@ export default class AppController {
     ticketDescription.classList.toggle('hidden');
   }
 
+  closeDeleteModal() {
+    const modalDelete = document.querySelector('.modal__delete');
+    const modalClose = modalDelete.querySelector('.modal__close');
+    modalClose.addEventListener('click', () => {
+      modalDelete.classList.add('hidden');
+    });
+  }
+
   // изменить статус тикета
   async changeStatus(id) {
     this.currentEditObj = await this.api.get(id);
     this.currentEditObj.status = !this.currentEditObj.status;
     await this.api.update(id, this.currentEditObj, (response) => {
+      this.ticketContainer.textContent = '';
+      this.renderTickets(response);
+    });
+    this.currentEditObj = null;
+  }
+
+  // удалить тикет
+  async deleteTicket(id) {
+    await this.api.delete(id, (response) => {
       this.ticketContainer.textContent = '';
       this.renderTickets(response);
     });

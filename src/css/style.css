@@ -17,7 +17,7 @@ h1 {
 
 .container {
   width: 900px;
-  height: 500px;
+  min-height: 500px;
   margin: 0 auto;
   border: 1px solid white;
   align-items: center;
