@@ -179,14 +179,14 @@ h1 {
 
 .form__input,
 .form__description {
-  width: 200px;
+  width: 250px;
   border-radius: 10px;
   border: 1px solid grey;
   padding: 10px;
 }
 
 .form__description {
-  min-width: 200px;
+  min-width: 250px;
   max-width: 200px;
   min-height: 50px;
 }

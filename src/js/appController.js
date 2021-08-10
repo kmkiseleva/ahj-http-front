@@ -9,7 +9,9 @@ export default class AppController {
   init() {
     this.registerEvents();
     this.api.list(this.renderTickets.bind(this));
+
     this.closeDeleteModal();
+    this.closeEditModal();
   }
 
   registerEvents() {
@@ -35,6 +37,20 @@ export default class AppController {
         this.changeStatus(id);
       }
 
+      // редактировать тикет
+      if (e.target.closest('.ticket__edit')) {
+        const parentEl = e.target.closest('.ticket');
+        const { id } = parentEl.dataset;
+        this.editTicket(id);
+
+        const modalOk = this.modalEditEl.querySelector('.modal__ok');
+        modalOk.addEventListener('click', (event) => {
+          event.stopImmediatePropagation();
+          this.makeEdit(id);
+          this.modalEditEl.classList.add('hidden');
+        });
+      }
+
       // удалить тикет
       if (e.target.closest('.ticket__delete')) {
         const parentEl = e.target.closest('.ticket');
@@ -52,8 +68,26 @@ export default class AppController {
     });
   }
 
+  // геттер контейнера с тикетами
   get ticketContainer() {
     return this.container.querySelector('.container__tickets');
+  }
+
+  // геттер модального окна редактирования
+  get modalEditEl() {
+    return this.container.querySelector('.modal__edit');
+  }
+
+  // геттер формы
+  get formElement() {
+    return this.modalEditEl.querySelector('form');
+  }
+
+  // очистить форму
+  clearForm() {
+    const { formElement } = this;
+    formElement.elements.name.value = '';
+    formElement.elements.description.value = '';
   }
 
   // отрисовка тикетов с сервера
@@ -102,6 +136,14 @@ export default class AppController {
     });
   }
 
+  // показать / скрыть модальное окно редактирования тикета
+  showEditModal(data) {
+    const { formElement } = this;
+    formElement.elements.name.value = data.name;
+    formElement.elements.description.value = data.description || 'No information';
+    this.modalEditEl.classList.toggle('hidden');
+  }
+
   // показать / скрыть описание тикета
   showDescription(e) {
     const parentEl = e.target.closest('.ticket');
@@ -109,6 +151,7 @@ export default class AppController {
     ticketDescription.classList.toggle('hidden');
   }
 
+  // закрыть модальное окно удаления тикета
   closeDeleteModal() {
     const modalDelete = document.querySelector('.modal__delete');
     const modalClose = modalDelete.querySelector('.modal__close');
@@ -117,10 +160,36 @@ export default class AppController {
     });
   }
 
+  // закрыть модальное окно удаления тикета
+  closeEditModal() {
+    const modalEdit = document.querySelector('.modal__edit');
+    const modalClose = modalEdit.querySelector('.modal__close');
+    modalClose.addEventListener('click', () => {
+      modalEdit.classList.add('hidden');
+    });
+  }
+
   // изменить статус тикета
   async changeStatus(id) {
     this.currentEditObj = await this.api.get(id);
     this.currentEditObj.status = !this.currentEditObj.status;
+    await this.api.update(id, this.currentEditObj, (response) => {
+      this.ticketContainer.textContent = '';
+      this.renderTickets(response);
+    });
+    this.currentEditObj = null;
+  }
+
+  // редактировать тикет
+  async editTicket(id) {
+    this.currentEditObj = await this.api.get(id);
+    this.showEditModal(this.currentEditObj);
+  }
+
+  async makeEdit(id) {
+    this.currentEditObj = await this.api.get(id);
+    this.currentEditObj.name = this.formElement.elements.name.value;
+    this.currentEditObj.description = this.formElement.elements.description.value;
     await this.api.update(id, this.currentEditObj, (response) => {
       this.ticketContainer.textContent = '';
       this.renderTickets(response);

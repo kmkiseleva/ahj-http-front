@@ -1,7 +1,6 @@
-import Entity from './Entity';
 import createRequest from './createRequest';
 
-export default class TicketAPI extends Entity {
+export default class TicketAPI {
   list(callback) {
     const options = {
       method: 'GET',
