@@ -17,7 +17,23 @@ export default class AppController {
   registerEvents() {
     // показать / скрыть модальное окно - добавить тикет
     const addTicket = document.querySelector('.container__add-ticket');
-    addTicket.addEventListener('click', () => this.showAddModal());
+    addTicket.addEventListener('click', () => {
+      this.showAddModal();
+    });
+
+    this.modalAddEl.querySelector('.modal__ok').addEventListener('click', (event) => {
+      event.stopImmediatePropagation();
+      const data = {
+        name: this.formAddTicketEl.elements.name.value,
+        description: this.formAddTicketEl.elements.description.value,
+      };
+
+      this.formAddTicketEl.elements.name.value = '';
+      this.formAddTicketEl.elements.description.value = '';
+
+      this.addNewTicket(data);
+      this.modalAddEl.classList.add('hidden');
+    });
 
     const containerTickets = document.querySelector('.container__tickets');
     containerTickets.addEventListener('click', (e) => {
@@ -73,21 +89,24 @@ export default class AppController {
     return this.container.querySelector('.container__tickets');
   }
 
+  // геттер модального окна добавления тикета
+  get modalAddEl() {
+    return this.container.querySelector('.modal__add');
+  }
+
   // геттер модального окна редактирования
   get modalEditEl() {
     return this.container.querySelector('.modal__edit');
   }
 
-  // геттер формы
-  get formElement() {
-    return this.modalEditEl.querySelector('form');
+  // геттер формы создания тикета
+  get formAddTicketEl() {
+    return this.modalAddEl.querySelector('form');
   }
 
-  // очистить форму
-  clearForm() {
-    const { formElement } = this;
-    formElement.elements.name.value = '';
-    formElement.elements.description.value = '';
+  // геттер формы редактирования
+  get formElement() {
+    return this.modalEditEl.querySelector('form');
   }
 
   // отрисовка тикетов с сервера
@@ -98,7 +117,7 @@ export default class AppController {
     });
   }
 
-  // отрисовка тикета
+  // отрисовка тикета с сервера
   render(ticket) {
     const createdDate = new Date(ticket.created);
     const date = `${createdDate.toLocaleDateString()} ${createdDate
@@ -166,6 +185,12 @@ export default class AppController {
     const modalClose = modalEdit.querySelector('.modal__close');
     modalClose.addEventListener('click', () => {
       modalEdit.classList.add('hidden');
+    });
+  }
+
+  async addNewTicket(data) {
+    await this.api.create(data, (response) => {
+      this.renderTickets(response);
     });
   }
 

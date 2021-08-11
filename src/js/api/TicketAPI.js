@@ -23,6 +23,7 @@ export default class TicketAPI {
     const options = {
       method: 'POST',
       query: `method=createTicket`,
+      data,
       callback,
     };
     return createRequest(options);
